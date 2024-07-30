@@ -4,7 +4,7 @@ import json
 class DataAcessObject:
     def __init__(self):
         
-        with open ('config.json', 'r') as file:
+        with open ('library\\db\\config.json', 'r') as file:
             config_file = json.load(file)
             self.db_path = config_file['db_path']
         
