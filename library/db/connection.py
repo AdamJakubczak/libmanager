@@ -17,11 +17,13 @@ class DataAcessObject:
         self.cursor = self.connection.cursor()
         print('Connection established')
 
+
     def close_connection(self) -> None:
 
         self.cursor.close()
         self.connection.close()
         print('Connection terminated')
+
     
     def check_if_author_exist(self, author_name : str, author_last_name : str) -> int:
 
@@ -39,16 +41,13 @@ class DataAcessObject:
     
     def add_author(self, author_name : str, author_last_name : str) -> None:
 
-        author_checker =  self.check_if_author_exist(author_name, author_last_name)
-        if author_checker:
-            pass
-        else:
-            db = DataAcessObject()
-            db.open_connection()
-            db.cursor.execute('INSERT INTO Authors (author_name, author_last_name) VALUES (?, ?)', (author_name.strip().capitalize(), author_last_name.strip().capitalize()))
-            db.connection.commit()
-            print(f'Added new author {author_name.capitalize()}, {author_last_name.capitalize()}')
-            db.close_connection()
+        db = DataAcessObject()
+        db.open_connection()
+        db.cursor.execute('INSERT INTO Authors (author_name, author_last_name) VALUES (?, ?)', (author_name.strip().capitalize(), author_last_name.strip().capitalize()))
+        db.connection.commit()
+        print(f'Added new author {author_name.capitalize()}, {author_last_name.capitalize()}')
+        db.close_connection()
+
     
     def check_if_book_exist(self, book_title : str, book_isbn : int):
 
@@ -63,5 +62,20 @@ class DataAcessObject:
         else:
             return False
 
-    def add_book(self, book_title, book_isbn):
-        ...
+    def add_book(self, book_title, book_isbn, author_name, author_last_name):
+
+        book_id = self.check_if_book_exist(book_title, book_isbn)
+        author_id = self.check_if_author_exist(author_name, author_last_name)
+
+        if not author_id:
+            self.add_author(author_name, author_last_name)
+            author_id = self.check_if_author_exist()
+        elif not book_id:
+            db = DataAcessObject()
+            db.open_connection()
+            db.cursor.execute('INSERT INTO Books (book_title, book_isbn, book_author_id) VALUES (?, ?, ?)', (book_title, book_isbn, author_id))
+            print(f'Added new book to library {book_title} by {author_name} {author_last_name}')
+            db.connection.commit()
+            db.close_connection()
+        else:
+            print('Book already exists')
