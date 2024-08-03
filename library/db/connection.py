@@ -49,7 +49,7 @@ class DataAcessObject:
         db.close_connection()
 
     
-    def check_if_book_exist(self, book_title : str, book_isbn : int):
+    def check_if_book_exist(self, book_title : str, book_isbn : int) -> int | None:
 
         db = DataAcessObject()
         db.open_connection()
@@ -62,7 +62,7 @@ class DataAcessObject:
         else:
             return False
 
-    def add_book(self, book_title, book_isbn, author_name, author_last_name):
+    def add_book(self, book_title: str, book_isbn : int, author_name : str, author_last_name : str) -> None:
 
         book_id = self.check_if_book_exist(book_title, book_isbn)
         author_id = self.check_if_author_exist(author_name, author_last_name)
@@ -79,3 +79,19 @@ class DataAcessObject:
             db.close_connection()
         else:
             print('Book already exists')
+
+    def add_user(self, user_name : str, user_last_name : str, user_card_number : int) -> None:
+
+        db = DataAcessObject()
+        db.open_connection()
+        db.cursor.execute('INSERT INTO Users (user_name, user_last_name, user_card_number) VALUES (?, ?, ?)', (user_name, user_last_name, user_card_number))
+        db.connection.commit()
+        print(f'Added new user: {user_name} {user_last_name}')
+
+    def check_if_user_exist(self, user_name : str, user_last_name : str, user_card_number : int) -> bool:
+
+        db = DataAcessObject()
+        db.open_connection()
+        db.cursor.execute('SELECT user_id FROM Users where user_name = ? AND user_last_name = ? AND user_card_number = ?', (user_name, user_last_name, user_card_number))
+        data = db.cursor.fetchone()
+        print(data[0])
