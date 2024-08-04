@@ -30,7 +30,15 @@ class DataAcessObject:
 
         db = DataAcessObject()
         db.open_connection()
-        db.cursor.execute('SELECT author_id FROM Authors WHERE author_name = ? AND author_last_name = ?', (author_name.strip().capitalize(), author_last_name.strip().capitalize()))
+
+        execute_querry = '''
+        SELECT author_id
+        FROM Authors
+        WHERE author_name = ?
+        AND author_last_name = ?
+        ''' 
+
+        db.cursor.execute(execute_querry, (author_name.strip().capitalize(), author_last_name.strip().capitalize()))
         data = db.cursor.fetchone()
         db.close_connection()
         if data:
@@ -44,7 +52,12 @@ class DataAcessObject:
 
         db = DataAcessObject()
         db.open_connection()
-        db.cursor.execute('INSERT INTO Authors (author_name, author_last_name) VALUES (?, ?)', (author_name.strip().capitalize(), author_last_name.strip().capitalize()))
+
+        execute_querry = '''
+        INSERT INTO Authors (author_name, author_last_name)
+        VALUES (?, ?)
+        '''
+        db.cursor.execute(execute_querry, (author_name.strip().capitalize(), author_last_name.strip().capitalize()))
         db.connection.commit()
         print(f'Added new author {author_name.capitalize()}, {author_last_name.capitalize()}')
         db.close_connection()
@@ -54,7 +67,15 @@ class DataAcessObject:
 
         db = DataAcessObject()
         db.open_connection()
-        db.cursor.execute('SELECT book_id FROM Books WHERE book_title = ? AND book_isbn = ?', (book_title, book_isbn))
+
+        execute_querry = '''
+        SELECT book_id
+        FROM Books
+        WHERE book_title = ?
+        AND book_isbn = ?
+        '''
+
+        db.cursor.execute(execute_querry, (book_title, book_isbn))
         data = db.cursor.fetchone()
         db.close_connection()
         if data:
@@ -74,7 +95,13 @@ class DataAcessObject:
         elif not book_id:
             db = DataAcessObject()
             db.open_connection()
-            db.cursor.execute('INSERT INTO Books (book_title, book_isbn, book_author_id) VALUES (?, ?, ?)', (book_title, book_isbn, author_id))
+
+            execute_querry = '''
+            INSERT INTO Books (book_title, book_isbn, book_author_id)
+            VALUES (?, ?, ?)
+            '''
+
+            db.cursor.execute(execute_querry, (book_title, book_isbn, author_id))
             print(f'Added new book to library {book_title} by {author_name} {author_last_name}')
             db.connection.commit()
             db.close_connection()
@@ -85,7 +112,13 @@ class DataAcessObject:
 
         db = DataAcessObject()
         db.open_connection()
-        db.cursor.execute('INSERT INTO Users (user_name, user_last_name, user_card_number) VALUES (?, ?, ?)', (user_name, user_last_name, user_card_number))
+
+        execute_querry = '''
+        INSERT INTO Users (user_name, user_last_name, user_card_number)
+        VALUES (?, ?, ?)
+        '''
+
+        db.cursor.execute(execute_querry, (user_name, user_last_name, user_card_number))
         db.connection.commit()
         print(f'Added new user: {user_name} {user_last_name}')
 
@@ -93,7 +126,16 @@ class DataAcessObject:
 
         db = DataAcessObject()
         db.open_connection()
-        db.cursor.execute('SELECT user_id FROM Users where user_name = ? AND user_last_name = ? AND user_card_number = ?', (user_name, user_last_name, user_card_number))
+
+        execute_querry = '''
+        SELECT user_id
+        FROM Users
+        WHERE user_name = ?
+        AND user_last_name = ?
+        AND user_card_number = ?
+        '''
+
+        db.cursor.execute(execute_querry, (user_name, user_last_name, user_card_number))
         data = db.cursor.fetchone()
         if data:
             print(f'User exists with Id {data[0]}')
@@ -102,6 +144,8 @@ class DataAcessObject:
             return False
     
     def check_book_amount(self):
+        db = DataAcessObject()
+        db.open_connection()
         ...
     
     def borrow_book(self, user_id : int, book_id : int) -> None:

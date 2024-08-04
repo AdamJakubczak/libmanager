@@ -1,4 +1,5 @@
 from library.db.connection import DataAcessObject
 
 db = DataAcessObject()
-db.add_user('Łukasz', 'Bartolik', 822373626)
+db.add_author('Anothony', 'Doerr')
+
