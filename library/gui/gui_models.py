@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, QTabWidget, QHBoxLayout, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, QTabWidget, QHBoxLayout, QVBoxLayout, QHeaderView
 
 
 class TabWidget(QTabWidget):
@@ -18,6 +18,10 @@ class TabOne(QWidget):
         super().__init__()
 
         main_layout = QVBoxLayout()
+
+        self.book_table = BooksTable()
+        main_layout.addWidget(self.book_table)
+
         self.setLayout(main_layout)
         
         ...
@@ -30,3 +34,19 @@ class TabTwo(QWidget):
         self.setLayout(main_layout)
 
         ...
+
+class BooksTable(QTableWidget):
+    def __init__(self):
+        super().__init__()
+
+        horizontal_headers = ['Id', 'Title', 'Author', 'Isbn']
+
+        self.setColumnCount(len(horizontal_headers))
+        self.setHorizontalHeaderLabels(horizontal_headers)
+
+        header = self.horizontalHeader()
+
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
