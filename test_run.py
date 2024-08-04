@@ -1,5 +1,5 @@
 from library.db.connection import DataAcessObject
 from datetime import datetime
+from library.main import main
 
-db = DataAcessObject()
-db.borrow_book(1,1)
+main()
