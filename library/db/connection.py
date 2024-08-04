@@ -1,6 +1,7 @@
 import sqlite3
 import json
 from datetime import datetime
+from library.models.models import Book
 
 class DataAcessObject:
     def __init__(self):
@@ -195,3 +196,31 @@ class DataAcessObject:
             print(f'User {user_id} borrowed {book_id} on {time_stamp}')
         else:
             raise Exception('No books available to rent')
+    
+    @classmethod
+    def select_all_books(cls) -> list[int | str]:
+
+        books = []
+        
+        db = DataAcessObject()
+        db.open_connection()
+
+        execute_querry = '''
+        SELECT book_id, book_title, author_name, author_last_name, book_isbn
+        FROM Books
+        JOIN Authors ON book_author_id = author_id
+        '''
+
+        db.cursor.execute(execute_querry)
+        data = db.cursor.fetchall()
+
+        for row in data:
+            book = Book()
+            book.book_id = row[0]
+            book.book_title = row[1]
+            book.book_author_name = row[2]
+            book.book_author_last_name = row[3]
+            book.book_isbn = row[4]
+            books.append(book)
+        
+        return books

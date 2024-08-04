@@ -39,7 +39,7 @@ class BooksTable(QTableWidget):
     def __init__(self):
         super().__init__()
 
-        horizontal_headers = ['Id', 'Title', 'Author', 'Isbn']
+        horizontal_headers = ['Id', 'Title', 'Author Name', 'Author Last Name', 'Isbn']
 
         self.setColumnCount(len(horizontal_headers))
         self.setHorizontalHeaderLabels(horizontal_headers)
@@ -50,3 +50,4 @@ class BooksTable(QTableWidget):
         header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
