@@ -18,14 +18,12 @@ class DataAcessObject:
         self.cursor = self.connection.cursor()
         print('Connection established')
 
-
     def close_connection(self) -> None:
 
         self.cursor.close()
         self.connection.close()
         print('Connection terminated')
 
-    
     def check_if_author_exist(self, author_name : str, author_last_name : str) -> int:
 
         db = DataAcessObject()
@@ -47,7 +45,6 @@ class DataAcessObject:
         else:
             return False
         
-    
     def add_author(self, author_name : str, author_last_name : str) -> None:
 
         db = DataAcessObject()
@@ -62,7 +59,6 @@ class DataAcessObject:
         print(f'Added new author {author_name.capitalize()}, {author_last_name.capitalize()}')
         db.close_connection()
 
-    
     def check_if_book_exist(self, book_title : str, book_isbn : int) -> int | None:
 
         db = DataAcessObject()
@@ -143,10 +139,59 @@ class DataAcessObject:
         else:
             return False
     
-    def check_book_amount(self):
+    def check_book_amount(self, book_id : int) -> int:
+        
         db = DataAcessObject()
         db.open_connection()
+
+        execute_querry = '''
+        SELECT book_count
+        FROM Books
+        WHERE book_id = ?'''
         ...
+
+        db.cursor.execute(execute_querry, (book_id, ))
+        data = db.cursor.fetchone()[0]
+        db.close_connection()
+
+        if data:
+            print(f'Available amount for book {book_id} = {data}')
+            return data
+        else:
+            return 0
     
+    def reduce_book_amount(self, book_id):
+        
+        db = DataAcessObject()
+        db.open_connection()
+
+        execute_querry = '''
+        UPDATE Books
+        SET book_count = book_count - 1
+        WHERE book_id = ?'''
+
+        db.cursor.execute(execute_querry, (book_id, ))
+        db.connection.commit()
+        db.close_connection()
+            
     def borrow_book(self, user_id : int, book_id : int) -> None:
-        ...
+
+        time_stamp = datetime.now().timestamp()
+        
+        if self.check_book_amount(book_id) > 0:
+            db = DataAcessObject()
+            db.open_connection()
+
+            execute_querry = '''
+            INSERT INTO Transactions (transaction_user_id, transaction_book_id, transaction_borrow_date)
+            VALUES (?, ?, ?)'''
+
+            db.cursor.execute(execute_querry, (user_id, book_id, time_stamp))
+            db.connection.commit()
+            db.close_connection()
+
+            db.reduce_book_amount(book_id)
+
+            print(f'User {user_id} borrowed {book_id} on {time_stamp}')
+        else:
+            raise Exception('No books available to rent')
