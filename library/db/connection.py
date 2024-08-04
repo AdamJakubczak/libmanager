@@ -101,5 +101,8 @@ class DataAcessObject:
         else:
             return False
     
+    def check_book_amount(self):
+        ...
+    
     def borrow_book(self, user_id : int, book_id : int) -> None:
         ...
