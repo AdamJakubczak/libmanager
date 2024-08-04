@@ -70,7 +70,7 @@ class DataAcessObject:
 
         if not author_id:
             self.add_author(author_name, author_last_name)
-            author_id = self.check_if_author_exist()
+            author_id = self.check_if_author_exist(author_name, author_last_name)
         elif not book_id:
             db = DataAcessObject()
             db.open_connection()
@@ -95,4 +95,11 @@ class DataAcessObject:
         db.open_connection()
         db.cursor.execute('SELECT user_id FROM Users where user_name = ? AND user_last_name = ? AND user_card_number = ?', (user_name, user_last_name, user_card_number))
         data = db.cursor.fetchone()
-        print(data[0])
+        if data:
+            print(f'User exists with Id {data[0]}')
+            return data[0]
+        else:
+            return False
+    
+    def borrow_book(self, user_id : int, book_id : int) -> None:
+        ...

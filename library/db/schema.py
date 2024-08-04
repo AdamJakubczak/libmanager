@@ -8,7 +8,8 @@ def create_user_table():
     CREATE TABLE Users (
     user_id INTEGER PRIMARY KEY,
     user_name TEXT NOT NULL,
-    user_last_name TEXT NOT NULL
+    user_last_name TEXT NOT NULL,
+    user_card_number INTEGER NOT NULL
     )
     '''
 
@@ -42,6 +43,7 @@ def create_books_table():
     book_title TEXT NOT NULL,
     book_author_id INTEGER NOT NULL,
     book_isbn INTEGER (13) NOT NULL,
+    book_count INTEGER,
     FOREIGN KEY (book_author_id) REFERENCES Authors(author_id)
     )
     '''
