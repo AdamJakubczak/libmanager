@@ -198,7 +198,7 @@ class DataAcessObject:
             raise Exception('No books available to rent')
     
     @classmethod
-    def select_all_books(cls) -> list[int | str]:
+    def select_all_books(cls) -> list:
 
         books = []
         

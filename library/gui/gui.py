@@ -1,5 +1,5 @@
 from PySide6.QtCore import QSize
-from PySide6.QtWidgets import QTabWidget, QMainWindow, QWidget
+from PySide6.QtWidgets import QMainWindow, QToolBar
 from library.gui.gui_models import TabWidget
 
 
@@ -11,6 +11,10 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle('Library management system')
         self.setMinimumSize(QSize(1000,600))
+
+        # Toolbar settings
+        
+        self.addToolBar(QToolBar())
 
         # Central Tab Widget settings
 

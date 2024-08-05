@@ -1,4 +1,6 @@
-from PySide6.QtWidgets import QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, QTabWidget, QHBoxLayout, QVBoxLayout, QHeaderView
+from PySide6.QtWidgets import QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, QTabWidget, QHBoxLayout, QVBoxLayout, QHeaderView, QTableWidgetItem
+from PySide6.QtCore import QSize
+from library.db.connection import DataAcessObject
 
 
 class TabWidget(QTabWidget):
@@ -8,7 +10,7 @@ class TabWidget(QTabWidget):
         self.tab_one = TabOne()
         self.tab_two = TabTwo()
 
-        self.addTab(self.tab_one, 'Tab 1')
+        self.addTab(self.tab_one, 'Books')
         self.addTab(self.tab_two, 'Tab 2')
 
         ...
@@ -21,6 +23,9 @@ class TabOne(QWidget):
 
         self.book_table = BooksTable()
         main_layout.addWidget(self.book_table)
+
+        self.tab_one_buttons = TabOneButtons()
+        main_layout.addWidget(self.tab_one_buttons)
 
         self.setLayout(main_layout)
         
@@ -51,3 +56,51 @@ class BooksTable(QTableWidget):
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
+
+        self.load_data()
+    
+    def load_data(self):
+
+        self.setRowCount(0) #Clears existing data
+
+        table_data = DataAcessObject.select_all_books()
+
+        for pos, row in enumerate(table_data):
+            self.insertRow(pos)
+            self.setItem(pos, 0, QTableWidgetItem(str(row.book_id)))
+            self.setItem(pos, 1, QTableWidgetItem(row.book_title))
+            self.setItem(pos, 2, QTableWidgetItem(row.book_author_name))
+            self.setItem(pos, 3, QTableWidgetItem(row.book_author_last_name))
+            self.setItem(pos, 4, QTableWidgetItem(str(row.book_isbn)))
+
+
+class TabOneButtons(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        main_layout = QHBoxLayout()
+
+        self.button1 = QPushButton('Add book')
+        self.button1.clicked.connect(self.add_book)
+        main_layout.addWidget(self.button1)
+        
+        self.setLayout(main_layout)
+
+        self.add_book_window = None
+    
+    def add_book(self):
+
+        if self.add_book_window is None:
+            self.add_book_window = AddBookWindow()
+        
+        self.add_book_window.show()
+
+class AddBookWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle('Add new book')
+        self.setMinimumSize(QSize(600,400))
+
+        main_layout = QVBoxLayout()
+        self.setLayout(main_layout)
