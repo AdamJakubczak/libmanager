@@ -25,7 +25,7 @@ class TabOne(QWidget):
         self.book_table = BooksTable()
         main_layout.addWidget(self.book_table)
 
-        self.tab_one_buttons = TabOneButtons()
+        self.tab_one_buttons = TabOneButtons(self.book_table)
         main_layout.addWidget(self.tab_one_buttons)
 
         self.setLayout(main_layout)
@@ -77,8 +77,10 @@ class BooksTable(QTableWidget):
 
 
 class TabOneButtons(QWidget):
-    def __init__(self):
+    def __init__(self, book_table):
         super().__init__()
+
+        self.book_table = book_table
 
         main_layout = QHBoxLayout()
 
@@ -93,13 +95,15 @@ class TabOneButtons(QWidget):
     def add_book(self):
 
         if self.add_book_window is None:
-            self.add_book_window = AddBookWindow()
+            self.add_book_window = AddBookWindow(self.book_table)
         
         self.add_book_window.show()
 
 class AddBookWindow(QWidget):
-    def __init__(self):
+    def __init__(self, book_table : BooksTable):
         super().__init__()
+
+        self.book_table = book_table
 
         self.setWindowTitle('Add new book')
         self.setFixedSize(QSize(600,200))
@@ -128,6 +132,7 @@ class AddBookWindow(QWidget):
         # print(book_title, book_author_name, book_author_last_name, book_isbn)
 
         db.add_book(book_title, book_isbn, book_author_name, book_author_last_name)
+        self.book_table.load_data()
 
 class BookWindowForm(QWidget):
     def __init__(self):
