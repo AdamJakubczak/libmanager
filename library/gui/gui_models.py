@@ -1,5 +1,4 @@
-from ast import main
-from re import A
+from cgitb import text
 from PySide6.QtWidgets import QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, QTabWidget, QHBoxLayout, QVBoxLayout, QHeaderView, QTableWidgetItem, QFormLayout
 from PySide6.QtCore import QSize
 from library.db.connection import DataAcessObject
@@ -61,6 +60,7 @@ class BooksTable(QTableWidget):
 
         self.load_data()
     
+    
     def load_data(self):
 
         self.setRowCount(0) #Clears existing data
@@ -102,14 +102,32 @@ class AddBookWindow(QWidget):
         super().__init__()
 
         self.setWindowTitle('Add new book')
-        self.setMinimumSize(QSize(600,400))
+        self.setFixedSize(QSize(600,200))
 
         main_layout = QVBoxLayout()
 
-        form = BookWindowForm()
-        main_layout.addWidget(form)
+        self.form = BookWindowForm()
+        main_layout.addWidget(self.form)
+
+        self.add_book_button = QPushButton('Add book')
+        self.add_book_button.clicked.connect(self.add_book)
+
+        main_layout.addWidget(self.add_book_button)
 
         self.setLayout(main_layout)
+    
+    def add_book(self):
+        db = DataAcessObject()
+        db.open_connection()
+
+        book_title = self.form.book_title.text()
+        book_author_name = self.form.book_author_name.text()
+        book_author_last_name = self.form.book_author_last_name.text()
+        book_isbn = int(self.form.book_isbn.text())
+
+        # print(book_title, book_author_name, book_author_last_name, book_isbn)
+
+        db.add_book(book_title, book_isbn, book_author_name, book_author_last_name)
 
 class BookWindowForm(QWidget):
     def __init__(self):
@@ -128,4 +146,3 @@ class BookWindowForm(QWidget):
         main_layout.addRow(QLabel('Book ISBN'), self.book_isbn)
 
         self.setLayout(main_layout)
-

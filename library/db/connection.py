@@ -64,6 +64,7 @@ class DataAcessObject:
 
         db = DataAcessObject()
         db.open_connection()
+        print(f'checking book id')
 
         execute_querry = '''
         SELECT book_id
@@ -89,7 +90,8 @@ class DataAcessObject:
         if not author_id:
             self.add_author(author_name, author_last_name)
             author_id = self.check_if_author_exist(author_name, author_last_name)
-        elif not book_id:
+
+        if not book_id:
             db = DataAcessObject()
             db.open_connection()
 
@@ -102,6 +104,7 @@ class DataAcessObject:
             print(f'Added new book to library {book_title} by {author_name} {author_last_name}')
             db.connection.commit()
             db.close_connection()
+            
         else:
             print('Book already exists')
 
