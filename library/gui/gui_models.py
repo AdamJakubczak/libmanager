@@ -1,4 +1,6 @@
-from PySide6.QtWidgets import QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, QTabWidget, QHBoxLayout, QVBoxLayout, QHeaderView, QTableWidgetItem
+from ast import main
+from re import A
+from PySide6.QtWidgets import QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, QTabWidget, QHBoxLayout, QVBoxLayout, QHeaderView, QTableWidgetItem, QFormLayout
 from PySide6.QtCore import QSize
 from library.db.connection import DataAcessObject
 
@@ -103,4 +105,27 @@ class AddBookWindow(QWidget):
         self.setMinimumSize(QSize(600,400))
 
         main_layout = QVBoxLayout()
+
+        form = BookWindowForm()
+        main_layout.addWidget(form)
+
         self.setLayout(main_layout)
+
+class BookWindowForm(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        main_layout = QFormLayout()
+
+        self.book_title = QLineEdit()
+        self.book_author_name = QLineEdit()
+        self.book_author_last_name = QLineEdit()
+        self.book_isbn = QLineEdit()
+
+        main_layout.addRow(QLabel('Book title'), self.book_title)
+        main_layout.addRow(QLabel('Author name'), self.book_author_name)
+        main_layout.addRow(QLabel('Author last name'), self.book_author_last_name)
+        main_layout.addRow(QLabel('Book ISBN'), self.book_isbn)
+
+        self.setLayout(main_layout)
+
