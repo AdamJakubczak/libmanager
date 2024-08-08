@@ -257,7 +257,32 @@ class AddUserWindow(QWidget):
         self.setLayout(main_layout)
 
     def add_user(self):
-        print(f'click')
+
+        user_name = self.add_user_form.user_name.text()
+        user_last_name = self.add_user_form.user_last_name.text()
+        user_card_numer = self.add_user_form.user_card_number.text()
+
+        try:
+            self.validate_inputs(user_name, user_last_name, user_card_numer)
+        
+        except ValueError as ve:
+            error_msg = QMessageBox()
+            error_msg.setText(str(ve))
+            error_msg.setWindowTitle('Error')
+            error_msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+            error_msg.setIcon(QMessageBox.Icon.Critical)
+            error_msg.exec()
+    
+    def validate_inputs(self, user_name, user_last_name, user_card_number):
+
+        if not user_name:
+            raise ValueError('User name must not be empty')
+        if not user_last_name:
+            raise ValueError('User last name must not be empty')
+        if not user_card_number:
+            raise ValueError('User card number must not empty')
+        if not str(user_card_number).isdigit():
+            raise ValueError('User card number must be a number')
 
 
 class AddUserForm(QWidget):
