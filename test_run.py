@@ -3,4 +3,3 @@ from datetime import datetime
 from library.main import main
 
 main()
-

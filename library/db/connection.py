@@ -2,7 +2,7 @@ import sqlite3
 import json
 
 from datetime import datetime
-from library.models.models import Book
+from library.models.models import Book, User
 
 class DataAcessObject:
     def __init__(self):
@@ -138,6 +138,7 @@ class DataAcessObject:
 
         db.cursor.execute(execute_querry, (user_name, user_last_name, user_card_number))
         data = db.cursor.fetchone()
+        db.close_connection()
         if data:
             print(f'User exists with Id {data[0]}')
             return data[0]
@@ -227,4 +228,33 @@ class DataAcessObject:
             book.book_isbn = row[4]
             books.append(book)
         
+        db.close_connection()
+                
         return books
+    
+    @classmethod
+    def select_all_users(cls):
+
+        users = []
+
+        db = DataAcessObject()
+        db.open_connection()
+
+        execute_querry = '''
+        SELECT *
+        FROM Users'''
+
+        db.cursor.execute(execute_querry)
+        data = db.cursor.fetchall()
+
+        for row in data:
+            user = User()
+            user.user_id = row[0]
+            user.user_name = row[1]
+            user.user_last_name = row[2]
+            user.user_card_number = row[3]
+            users.append(user)
+        
+        db.close_connection()
+
+        return users
