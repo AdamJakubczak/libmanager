@@ -1,7 +1,14 @@
-from cgitb import text
-from PySide6.QtWidgets import QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, QTabWidget, QHBoxLayout, QVBoxLayout, QHeaderView, QTableWidgetItem, QFormLayout
+# Standard and third-party library imports
 from PySide6.QtCore import QSize
+from PySide6.QtWidgets import (
+    QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, 
+    QTabWidget, QHBoxLayout, QVBoxLayout, QHeaderView, 
+    QTableWidgetItem, QFormLayout, QMessageBox
+)
+
+# Local application imports
 from library.db.connection import DataAcessObject
+
 
 
 class TabWidget(QTabWidget):
@@ -127,13 +134,37 @@ class AddBookWindow(QWidget):
         book_title = self.form.book_title.text()
         book_author_name = self.form.book_author_name.text()
         book_author_last_name = self.form.book_author_last_name.text()
-        book_isbn = int(self.form.book_isbn.text())
+        book_isbn = self.form.book_isbn.text()
+
+        try:
+            self.validate_inputs(book_title, book_author_name, book_author_last_name, book_isbn)
+            db.add_book(book_title, int(book_isbn), book_author_name, book_author_last_name)
+            self.book_table.load_data()
+        
+        except ValueError as ve:
+
+            error_msg = QMessageBox()
+            error_msg.setText(str(ve))
+            error_msg.setWindowTitle('Error')
+            error_msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+            error_msg.setIcon(QMessageBox.Icon.Critical)
+            error_msg.exec()
 
         # print(book_title, book_author_name, book_author_last_name, book_isbn)
+    
+    def validate_inputs(self, book_title, book_author_name, book_author_last_name, book_isbn):
+        if not book_title:
+            raise ValueError('Book title must not be empty')
+        if not book_author_name:
+            raise ValueError('Author name must not be empty')
+        if not book_author_last_name:
+            raise ValueError('Author last name must not be empty')
+        if not book_isbn:
+            raise ValueError('Book isbn must not be empty')
+        if not str(book_isbn).isdigit() or not 10 < len(book_isbn) > 13:
+            raise ValueError('ISBN not a number, or too long, or maybe too short')
 
-        db.add_book(book_title, book_isbn, book_author_name, book_author_last_name)
-        self.book_table.load_data()
-
+        
 class BookWindowForm(QWidget):
     def __init__(self):
         super().__init__()
