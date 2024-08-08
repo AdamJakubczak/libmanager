@@ -178,7 +178,7 @@ class TabTwo(QWidget):
         self.user_table = UsersTable()
         main_layout.addWidget(self.user_table)
 
-        self.buttons_layout = TabTwoButtons()
+        self.buttons_layout = TabTwoButtons(self.user_table)
         main_layout.addWidget(self.buttons_layout)
 
         self.setLayout(main_layout)
@@ -216,13 +216,14 @@ class UsersTable(QTableWidget):
 
 
 class TabTwoButtons(QWidget):
-    def __init__(self):
+    def __init__(self, user_table):
         super().__init__()
+
+        self.user_table = user_table
 
         main_layout = QHBoxLayout()
 
         self.add_user_button = QPushButton('Add user')
-
         self.add_user_button.clicked.connect(self.add_user)
         
         main_layout.addWidget(self.add_user_button)
@@ -233,14 +234,16 @@ class TabTwoButtons(QWidget):
     def add_user(self):
 
         if self.add_user_window is None:
-            self.add_user_window = AddUserWindow()
+            self.add_user_window = AddUserWindow(self.user_table)
         
         self.add_user_window.show()
 
 
 class AddUserWindow(QWidget):
-    def __init__(self):
+    def __init__(self, user_table : UsersTable):
         super().__init__()
+
+        self.user_table = user_table
         
         self.setWindowTitle('Add user')
         self.setFixedSize(QSize(600,150))
@@ -264,7 +267,10 @@ class AddUserWindow(QWidget):
 
         try:
             self.validate_inputs(user_name, user_last_name, user_card_numer)
-        
+            db = DataAcessObject()
+            db.add_user(user_name, user_last_name, int(user_card_numer))
+            self.user_table.load_data()
+            
         except ValueError as ve:
             error_msg = QMessageBox()
             error_msg.setText(str(ve))
