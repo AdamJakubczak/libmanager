@@ -211,7 +211,7 @@ class DataAcessObject:
         db.open_connection()
 
         execute_querry = '''
-        SELECT book_id, book_title, author_name, author_last_name, book_isbn
+        SELECT book_id, book_title, author_name, author_last_name, book_isbn, book_count
         FROM Books
         JOIN Authors ON book_author_id = author_id
         '''
@@ -226,6 +226,7 @@ class DataAcessObject:
             book.book_author_name = row[2]
             book.book_author_last_name = row[3]
             book.book_isbn = row[4]
+            book.book_count = row[5]
             books.append(book)
         
         db.close_connection()

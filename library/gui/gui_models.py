@@ -5,9 +5,8 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import (
     QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, 
     QTabWidget, QHBoxLayout, QVBoxLayout, QHeaderView, 
-    QTableWidgetItem, QFormLayout, QMessageBox
+    QTableWidgetItem, QFormLayout, QMessageBox, QAbstractItemView
 )
-
 # Local application imports
 from library.db.connection import DataAcessObject
 
@@ -51,10 +50,11 @@ class BooksTable(QTableWidget):
     def __init__(self):
         super().__init__()
 
-        horizontal_headers = ['Id', 'Title', 'Author Name', 'Author Last Name', 'Isbn']
+        horizontal_headers = ['Id', 'Title', 'Author Name', 'Author Last Name', 'Isbn', 'Quantity']
 
         self.setColumnCount(len(horizontal_headers))
         self.setHorizontalHeaderLabels(horizontal_headers)
+        self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers) #Brak możliwości edycji tabeli
 
         header = self.horizontalHeader()
 
@@ -63,6 +63,7 @@ class BooksTable(QTableWidget):
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(5, QHeaderView.ResizeMode.Stretch)
 
         self.table_data = []
         self.load_data()
@@ -88,6 +89,7 @@ class BooksTable(QTableWidget):
                 self.setItem(current_row, 2, QTableWidgetItem(row.book_author_name))
                 self.setItem(current_row, 3, QTableWidgetItem(row.book_author_last_name))
                 self.setItem(current_row, 4, QTableWidgetItem(str(row.book_isbn)))
+                self.setItem(current_row, 5, QTableWidgetItem(str(row.book_count)))
 
                 current_row += 1
 

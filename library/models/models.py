@@ -6,6 +6,7 @@ class Book:
         self.book_author_name : str
         self.book_author_last_name : str
         self.book_isbn : int
+        self.book_count : int
     
     def __repr__(self):
         return f'Book Id: {self.book_id}'
