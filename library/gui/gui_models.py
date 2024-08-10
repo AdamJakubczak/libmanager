@@ -69,10 +69,11 @@ class BooksTable(QTableWidget):
         self.load_data()
 
         self.cellClicked.connect(self.retrieve_book_id) #Podczas kliknięcia w komórkę, zwraca ID książki
+        self.table_book_id = ''
    
     def load_data(self):
         self.table_data = DataAcessObject.select_all_books()
-        self.filter_data("")
+        self.filter_data('')
     
     def filter_data(self, search_term):
 
@@ -119,6 +120,7 @@ class TabOneButtons(QWidget):
         self.setLayout(main_layout)
 
         self.add_book_window = None
+        self.rent_book_window = None
     
     def add_book(self):
 
@@ -128,7 +130,18 @@ class TabOneButtons(QWidget):
         self.add_book_window.show()
     
     def rent_book(self):
-        print('click click click')
+        if not self.book_table.table_book_id:
+            error_msg = QMessageBox()
+            error_msg.setText('No book was selected!')
+            error_msg.setWindowTitle('Error')
+            error_msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+            error_msg.setIcon(QMessageBox.Icon.Critical)
+            error_msg.exec()
+
+        elif self.rent_book_window is None:
+            self.rent_book_window = RentBookWindow(self.book_table)
+        
+            self.rent_book_window.show()
 
 
 class AddBookWindow(QWidget):
@@ -204,6 +217,33 @@ class BookWindowForm(QWidget):
         main_layout.addRow(QLabel('Book ISBN'), self.book_isbn)
 
         self.setLayout(main_layout)
+
+class RentBookWindow(QWidget):
+    def __init__(self, books_table):
+        super().__init__()
+
+        self.books_table = books_table
+
+        self.setFixedSize(QSize(800,600))
+        self.setWindowTitle('Rent a book')
+
+        main_layout = QVBoxLayout()
+
+        self.search_bar = QLineEdit()
+        self.search_bar.setPlaceholderText('Search user')
+        main_layout.addWidget(self.search_bar)        
+
+        self.rent_users_table = UsersTable()
+        main_layout.addWidget(self.rent_users_table)
+
+        self.rent_button = QPushButton('Rent book')
+        self.rent_button.clicked.connect(self.rent_book)
+        main_layout.addWidget(self.rent_button)
+
+        self.setLayout(main_layout)
+    
+    def rent_book(self):
+        print('Renting in progress')
 
 class TabTwo(QWidget):
     def __init__(self):
