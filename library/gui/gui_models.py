@@ -1,5 +1,6 @@
 # Standard and third-party library imports
 from ast import Add, main
+from http import server
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import (
     QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, 
@@ -28,6 +29,11 @@ class TabOne(QWidget):
 
         main_layout = QVBoxLayout()
 
+        self.search_bar = QLineEdit()
+        self.search_bar.setPlaceholderText('Search for books')
+        self.search_bar.textChanged.connect(self.search)
+        main_layout.addWidget(self.search_bar)
+
         self.book_table = BooksTable()
         main_layout.addWidget(self.book_table)
 
@@ -35,6 +41,10 @@ class TabOne(QWidget):
         main_layout.addWidget(self.tab_one_buttons)
 
         self.setLayout(main_layout)
+
+    def search(self):
+        search_term = self.search_bar.text().lower()
+        self.book_table.filter_data(search_term)
 
 
 class BooksTable(QTableWidget):
@@ -54,21 +64,32 @@ class BooksTable(QTableWidget):
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
 
+        self.table_data = []
         self.load_data()
    
     def load_data(self):
+        self.table_data = DataAcessObject.select_all_books()
+        self.filter_data("")
+    
+    def filter_data(self, search_term):
 
-        self.setRowCount(0) #Clears existing data
+        self.setRowCount(0)
+        current_row = 0
 
-        table_data = DataAcessObject.select_all_books()
+        for row in self.table_data:
+            if (search_term in row.book_title.lower() or
+                search_term in row.book_author_name.lower() or
+                search_term in row.book_author_last_name.lower() or
+                search_term in str(row.book_isbn)):
 
-        for pos, row in enumerate(table_data):
-            self.insertRow(pos)
-            self.setItem(pos, 0, QTableWidgetItem(str(row.book_id)))
-            self.setItem(pos, 1, QTableWidgetItem(row.book_title))
-            self.setItem(pos, 2, QTableWidgetItem(row.book_author_name))
-            self.setItem(pos, 3, QTableWidgetItem(row.book_author_last_name))
-            self.setItem(pos, 4, QTableWidgetItem(str(row.book_isbn)))
+                self.insertRow(current_row)
+                self.setItem(current_row, 0, QTableWidgetItem(str(row.book_id)))
+                self.setItem(current_row, 1, QTableWidgetItem(row.book_title))
+                self.setItem(current_row, 2, QTableWidgetItem(row.book_author_name))
+                self.setItem(current_row, 3, QTableWidgetItem(row.book_author_last_name))
+                self.setItem(current_row, 4, QTableWidgetItem(str(row.book_isbn)))
+
+                current_row += 1
 
 
 class TabOneButtons(QWidget):
@@ -82,6 +103,10 @@ class TabOneButtons(QWidget):
         self.button1 = QPushButton('Add book')
         self.button1.clicked.connect(self.add_book)
         main_layout.addWidget(self.button1)
+
+        self.button2 = QPushButton('Rent book')
+        self.button2.clicked.connect(self.rent_book)
+        main_layout.addWidget(self.button2)
         
         self.setLayout(main_layout)
 
@@ -93,6 +118,9 @@ class TabOneButtons(QWidget):
             self.add_book_window = AddBookWindow(self.book_table)
         
         self.add_book_window.show()
+    
+    def rent_book(self):
+        print('click click click')
 
 
 class AddBookWindow(QWidget):
