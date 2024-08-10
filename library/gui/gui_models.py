@@ -67,6 +67,8 @@ class BooksTable(QTableWidget):
 
         self.table_data = []
         self.load_data()
+
+        self.cellClicked.connect(self.retrieve_book_id) #Podczas kliknięcia w komórkę, zwraca ID książki
    
     def load_data(self):
         self.table_data = DataAcessObject.select_all_books()
@@ -92,6 +94,10 @@ class BooksTable(QTableWidget):
                 self.setItem(current_row, 5, QTableWidgetItem(str(row.book_count)))
 
                 current_row += 1
+    
+    def retrieve_book_id(self, row, column):
+        self.table_book_id = self.item(row, 0).text()
+        print(self.table_book_id)
 
 
 class TabOneButtons(QWidget):
