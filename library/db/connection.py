@@ -304,9 +304,16 @@ class DataAcessObject:
         execute_querry = '''
         UPDATE Transactions
         SET transaction_return_date = ?
-        WHERE transaction_user_id = ?
-        AND transaction_book_id = ?
-        AND transaction_return_date IS NULL
+        WHERE transaction_id = (
+        SELECT transaction_id
+            FROM (
+                SELECT transaction_id
+                FROM Transactions
+                WHERE transaction_user_id = ?
+                AND transaction_book_id = ?
+                AND transaction_return_date IS NULL
+                LIMIT 1
+                ))
         '''
 
         db.cursor.execute(execute_querry, (timestamp, transaction_user_id, transaction_book_id))

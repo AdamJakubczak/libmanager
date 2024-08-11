@@ -14,7 +14,7 @@ class TabWidget(QTabWidget):
         super().__init__()
 
         self.tab_one = TabOne()
-        self.tab_two = TabTwo()
+        self.tab_two = TabTwo(self.tab_one)
 
         self.addTab(self.tab_one, 'Books')
         self.addTab(self.tab_two, 'Users')
@@ -281,18 +281,29 @@ class RentBookWindow(QWidget):
     
 
 class TabTwo(QWidget):
-    def __init__(self):
+    def __init__(self, tab_one):
         super().__init__()
+        
+        self.tab_one = tab_one
 
         main_layout = QVBoxLayout()
+
+        self.search_bar = QLineEdit()
+        self.search_bar.setPlaceholderText('Search for users')
+        self.search_bar.textChanged.connect(self.search)
+        main_layout.addWidget(self.search_bar)
 
         self.user_table = UsersTable()
         main_layout.addWidget(self.user_table)
 
-        self.buttons_layout = TabTwoButtons(self.user_table)
+        self.buttons_layout = TabTwoButtons(self.user_table, self.tab_one)
         main_layout.addWidget(self.buttons_layout)
 
         self.setLayout(main_layout)
+    
+    def search(self):
+        search_term = self.search_bar.text().lower()
+        self.user_table.filter_data(search_term)
 
 class UsersTable(QTableWidget):
     def __init__(self):
@@ -346,10 +357,11 @@ class UsersTable(QTableWidget):
 
 
 class TabTwoButtons(QWidget):
-    def __init__(self, user_table):
+    def __init__(self, user_table, tab_one):
         super().__init__()
 
         self.user_table = user_table
+        self.tab_one = tab_one
 
         main_layout = QHBoxLayout()
 
@@ -372,7 +384,7 @@ class TabTwoButtons(QWidget):
     
     def check_account_func(self):
 
-        self.check_account_window = CheckAccountWindow(self.user_table)
+        self.check_account_window = CheckAccountWindow(self.user_table, self.tab_one)
         self.check_account_window.show()
 
 
@@ -445,13 +457,14 @@ class AddUserForm(QWidget):
         self.setLayout(main_layout)
 
 class CheckAccountWindow(QWidget):
-    def __init__(self, users_table):
+    def __init__(self, users_table, tab_one):
         super().__init__()
 
         self.setWindowTitle('Account window')
         self.setMinimumSize(QSize(500,300))
 
         self.users_table = users_table
+        self.tab_one = tab_one
 
         main_layout = QVBoxLayout()
 
@@ -470,6 +483,7 @@ class CheckAccountWindow(QWidget):
             DataAcessObject.return_book(self.users_table.table_user_id, int(self.check_account_table.return_book_id_number))
             self.check_account_table.load_data(self.users_table.table_user_id)
             self.check_account_table.return_book_id_number = ''
+            self.tab_one.book_table.load_data()
 
         except ValueError:
             error_msg = QMessageBox()
