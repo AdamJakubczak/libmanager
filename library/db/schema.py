@@ -60,10 +60,10 @@ def create_transactions_table():
     transaction_id INTEGER PRIMARY KEY,
     transaction_user_id INTEGER NOT NULL,
     transaction_book_id INTEGER NOT NULL,
-    transaction_borrow_date INTEGER NOT NULL,
+    transaction_borrow_date INTEGER,
     transaction_return_date INTEGER,
-    FOREIGN KEY (transaction_user_id) REFERENCES Users(user_id)
-    FOREIGN KEY (transaction_book_id) REFRENCES Books(book_id)
+    FOREIGN KEY (transaction_user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (transaction_book_id) REFERENCES Books(book_id)
     )
     '''
     db.cursor.execute(execute_querry)

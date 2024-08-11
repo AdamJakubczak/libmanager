@@ -275,6 +275,7 @@ class DataAcessObject:
         JOIN Users ON transaction_user_id = user_id
         JOIN Authors ON book_author_id = author_id
         WHERE user_id = ?
+        AND transaction_return_date IS NULL
         '''
 
         db.cursor.execute(execute_querry, (user_id,))
@@ -291,3 +292,41 @@ class DataAcessObject:
             borrowed_books.append(book)
         
         return borrowed_books
+    
+    @classmethod
+    def return_book(cls, transaction_user_id : int, transaction_book_id : int):
+
+        timestamp = datetime.now().timestamp()
+
+        db = DataAcessObject()
+        db.open_connection()
+        
+        execute_querry = '''
+        UPDATE Transactions
+        SET transaction_return_date = ?
+        WHERE transaction_user_id = ?
+        AND transaction_book_id = ?
+        AND transaction_return_date IS NULL
+        '''
+
+        db.cursor.execute(execute_querry, (timestamp, transaction_user_id, transaction_book_id))
+        db.connection.commit()
+        db.close_connection()
+
+        db.subtract_book(transaction_book_id)
+    
+    @classmethod
+    def subtract_book(cls, book_id):
+
+        db = DataAcessObject()
+        db.open_connection()
+
+        execute_querry = '''
+        UPDATE Books
+        SET book_count = book_count + 1
+        WHERE book_id = ?
+        '''
+
+        db.cursor.execute(execute_querry, (book_id, ))
+        db.connection.commit()
+        db.close_connection()

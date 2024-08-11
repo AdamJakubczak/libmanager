@@ -301,6 +301,7 @@ class UsersTable(QTableWidget):
 
         self.setColumnCount(len(horizontal_headers))
         self.setHorizontalHeaderLabels(horizontal_headers)
+        self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
         header = self.horizontalHeader()
 
@@ -456,7 +457,16 @@ class CheckAccountWindow(QWidget):
         self.check_account_table = CheckAccountWindowTable(self.users_table)
         main_layout.addWidget(self.check_account_table)
 
+        self.return_button = QPushButton('Return book')
+        self.return_button.clicked.connect(self.return_book)
+        main_layout.addWidget(self.return_button)
+
         self.setLayout(main_layout)
+    
+    def return_book(self):
+        
+        DataAcessObject.return_book(self.users_table.table_user_id, int(self.check_account_table.return_book_id_number))
+        self.check_account_table.load_data(self.users_table.table_user_id)
 
 class CheckAccountWindowTable(QTableWidget):
     def __init__(self, users_table):
@@ -478,8 +488,12 @@ class CheckAccountWindowTable(QTableWidget):
         header.setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
 
         self.load_data(self.users_table.table_user_id)
+        self.cellClicked.connect(self.return_book_id)
+        self.return_book_id_number = ''
 
     def load_data(self, user_id):
+
+        self.setRowCount(0)
 
         self.table_data = DataAcessObject.retrieve_what_user_got(user_id)
 
@@ -490,3 +504,7 @@ class CheckAccountWindowTable(QTableWidget):
             self.setItem(id, 2, QTableWidgetItem(str(row.book_author_name)))
             self.setItem(id, 3, QTableWidgetItem(str(row.book_author_last_name)))
             self.setItem(id, 4, QTableWidgetItem(str(row.book_isbn)))
+    
+    def return_book_id(self, row, column):
+        self.return_book_id_number = self.item(row, 0).text()
+        print(self.return_book_id_number)
