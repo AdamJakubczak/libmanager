@@ -179,8 +179,8 @@ class DataAcessObject:
         db.cursor.execute(execute_querry, (book_id, ))
         db.connection.commit()
         db.close_connection()
-            
-    def borrow_book(self, user_id : int, book_id : int) -> None:
+                    
+    def rent_book(self, user_id : int, book_id : int) -> None:
 
         time_stamp = datetime.now().timestamp()
         

@@ -244,8 +244,28 @@ class RentBookWindow(QWidget):
         self.setLayout(main_layout)
     
     def rent_book(self):
-        print('Renting in progress')
-    
+
+        db = DataAcessObject()
+
+        try:
+            db.rent_book(int(self.rent_users_table.table_user_id), self.books_table.table_book_id)
+        
+        except Exception as e:
+            error_msg = QMessageBox()
+            error_msg.setText(str(e))
+            error_msg.setWindowTitle('Error')
+            error_msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+            error_msg.setIcon(QMessageBox.Icon.Critical)
+            error_msg.exec()
+        
+        else:
+            conf_msg = QMessageBox()
+            conf_msg.setText('Book borrowed!')
+            conf_msg.setWindowTitle('Success')
+            conf_msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+            conf_msg.setIcon(QMessageBox.Icon.Information)
+            conf_msg.exec()
+            
     def search(self):
         search_term = self.search_bar.text().lower()
         self.rent_users_table.filter_data(search_term)
@@ -286,7 +306,7 @@ class UsersTable(QTableWidget):
         self.load_data()
 
         self.cellClicked.connect(self.retrieve_user_id) #Podczas kliknięcia w komórkę, zwraca ID książki
-        self.table_book_id = ''
+        self.table_user_id = ''
    
     def load_data(self):
         self.table_data = DataAcessObject.select_all_users()
@@ -311,8 +331,8 @@ class UsersTable(QTableWidget):
                 current_row += 1
     
     def retrieve_user_id(self, row, column):
-        self.table_book_id = self.item(row, 0).text()
-        print(self.table_book_id)
+        self.table_user_id = self.item(row, 0).text()
+        print(self.table_user_id)
     
 
 
