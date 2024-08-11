@@ -247,24 +247,35 @@ class RentBookWindow(QWidget):
 
         db = DataAcessObject()
 
-        try:
-            db.rent_book(int(self.rent_users_table.table_user_id), self.books_table.table_book_id)
-        
-        except Exception as e:
+        if not self.rent_users_table.table_user_id:
             error_msg = QMessageBox()
-            error_msg.setText(str(e))
+            error_msg.setText('User was not selected')
             error_msg.setWindowTitle('Error')
             error_msg.setStandardButtons(QMessageBox.StandardButton.Ok)
             error_msg.setIcon(QMessageBox.Icon.Critical)
             error_msg.exec()
         
         else:
-            conf_msg = QMessageBox()
-            conf_msg.setText('Book borrowed!')
-            conf_msg.setWindowTitle('Success')
-            conf_msg.setStandardButtons(QMessageBox.StandardButton.Ok)
-            conf_msg.setIcon(QMessageBox.Icon.Information)
-            conf_msg.exec()
+
+            try:
+                db.rent_book(int(self.rent_users_table.table_user_id), self.books_table.table_book_id)
+            
+            except Exception as e:
+                error_msg = QMessageBox()
+                error_msg.setText(str(e))
+                error_msg.setWindowTitle('Error')
+                error_msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+                error_msg.setIcon(QMessageBox.Icon.Critical)
+                error_msg.exec()
+            
+            else:
+                conf_msg = QMessageBox()
+                conf_msg.setText('Book borrowed!')
+                conf_msg.setWindowTitle('Success')
+                conf_msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+                conf_msg.setIcon(QMessageBox.Icon.Information)
+                conf_msg.exec()
+                self.destroy()
             
     def search(self):
         search_term = self.search_bar.text().lower()
@@ -439,6 +450,9 @@ class CheckAccountWindow(QWidget):
     def __init__(self, users_table):
         super().__init__()
 
+        self.setWindowTitle('Account window')
+        self.setMinimumSize(QSize(500,300))
+
         self.users_table = users_table
 
         main_layout = QVBoxLayout()
@@ -458,7 +472,6 @@ class CheckAccountWindowTable(QTableWidget):
 
         self.setColumnCount(len(horizontal_headers))
         self.setHorizontalHeaderLabels(horizontal_headers)
-        self.setWindowTitle('Account window')
 
         header = self.horizontalHeader()
 
