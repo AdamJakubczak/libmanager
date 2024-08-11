@@ -8,7 +8,7 @@ This is a small library management application designed for home usage. It allow
 
 - **Add Books**: Easily add new books to your library collection.
 - **Add Users**: Manage users who can borrow books from the library.
-- **Rent Books**: Keep track of which books are rented out and to whom.
+- **Rent Books and return**: Keep track of which books are rented out and to whom.
 - **Check Rentals**: View the current status of all rented books and see who has borrowed them.
 
 ## Technologies Used
