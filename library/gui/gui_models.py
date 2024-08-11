@@ -1,6 +1,8 @@
 # Standard and third-party library imports
 from ast import Add, main
 from http import server
+from re import search
+from turtle import isvisible
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import (
     QWidget, QPushButton, QLabel, QLineEdit, QTableWidget, 
@@ -116,17 +118,16 @@ class TabOneButtons(QWidget):
         self.button2 = QPushButton('Rent book')
         self.button2.clicked.connect(self.rent_book)
         main_layout.addWidget(self.button2)
-        
-        self.setLayout(main_layout)
 
         self.add_book_window = None
         self.rent_book_window = None
+        
+        self.setLayout(main_layout)
+
     
     def add_book(self):
 
-        if self.add_book_window is None:
-            self.add_book_window = AddBookWindow(self.book_table)
-        
+        self.add_book_window = AddBookWindow(self.book_table)
         self.add_book_window.show()
     
     def rent_book(self):
@@ -138,9 +139,8 @@ class TabOneButtons(QWidget):
             error_msg.setIcon(QMessageBox.Icon.Critical)
             error_msg.exec()
 
-        elif self.rent_book_window is None:
+        else:
             self.rent_book_window = RentBookWindow(self.book_table)
-        
             self.rent_book_window.show()
 
 
@@ -231,6 +231,7 @@ class RentBookWindow(QWidget):
 
         self.search_bar = QLineEdit()
         self.search_bar.setPlaceholderText('Search user')
+        self.search_bar.textChanged.connect(self.search)
         main_layout.addWidget(self.search_bar)        
 
         self.rent_users_table = UsersTable()
@@ -244,6 +245,12 @@ class RentBookWindow(QWidget):
     
     def rent_book(self):
         print('Renting in progress')
+    
+    def search(self):
+        search_term = self.search_bar.text().lower()
+        self.rent_users_table.filter_data(search_term)
+
+    
 
 class TabTwo(QWidget):
     def __init__(self):
@@ -275,20 +282,38 @@ class UsersTable(QTableWidget):
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
 
+        self.table_data = []
         self.load_data()
-    
+
+        self.cellClicked.connect(self.retrieve_user_id) #Podczas kliknięcia w komórkę, zwraca ID książki
+        self.table_book_id = ''
+   
     def load_data(self):
+        self.table_data = DataAcessObject.select_all_users()
+        self.filter_data('')
+    
+    def filter_data(self, search_term):
 
-        self.setRowCount(0) #Clears existing data
+        self.setRowCount(0)
+        current_row = 0
 
-        table_data = DataAcessObject.select_all_users()
+        for row in self.table_data:
+            if (search_term in row.user_name.lower() or
+                search_term in row.user_last_name.lower() or
+                search_term in str(row.user_card_number)):
 
-        for pos, row in enumerate(table_data):
-            self.insertRow(pos)
-            self.setItem(pos, 0, QTableWidgetItem(str(row.user_id)))
-            self.setItem(pos, 1, QTableWidgetItem(row.user_name))
-            self.setItem(pos, 2, QTableWidgetItem(row.user_last_name))
-            self.setItem(pos, 3, QTableWidgetItem(str(row.user_card_number)))
+                self.insertRow(current_row)
+                self.setItem(current_row, 0, QTableWidgetItem(str(row.user_id)))
+                self.setItem(current_row, 1, QTableWidgetItem(row.user_name))
+                self.setItem(current_row, 2, QTableWidgetItem(row.user_last_name))
+                self.setItem(current_row, 3, QTableWidgetItem(str(row.user_card_number)))
+
+                current_row += 1
+    
+    def retrieve_user_id(self, row, column):
+        self.table_book_id = self.item(row, 0).text()
+        print(self.table_book_id)
+    
 
 
 class TabTwoButtons(QWidget):
@@ -309,9 +334,7 @@ class TabTwoButtons(QWidget):
     
     def add_user(self):
 
-        if self.add_user_window is None:
-            self.add_user_window = AddUserWindow(self.user_table)
-        
+        self.add_user_window = AddUserWindow(self.user_table)
         self.add_user_window.show()
 
 
