@@ -31,8 +31,8 @@ Ensure you have the following installed on your system:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/library-management-app.git
-   cd library-management-app
+   git clone https://github.com/AdamJakubczak/libmanager.git
+   cd libmanager
 
 2. Install requirements:
 
