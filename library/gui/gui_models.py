@@ -272,6 +272,7 @@ class RentBookWindow(QWidget):
                 conf_msg.setIcon(QMessageBox.Icon.Information)
                 conf_msg.exec()
                 self.destroy()
+                self.books_table.load_data()
             
     def search(self):
         search_term = self.search_bar.text().lower()
@@ -465,8 +466,19 @@ class CheckAccountWindow(QWidget):
     
     def return_book(self):
         
-        DataAcessObject.return_book(self.users_table.table_user_id, int(self.check_account_table.return_book_id_number))
-        self.check_account_table.load_data(self.users_table.table_user_id)
+        try:
+            DataAcessObject.return_book(self.users_table.table_user_id, int(self.check_account_table.return_book_id_number))
+            self.check_account_table.load_data(self.users_table.table_user_id)
+            self.check_account_table.return_book_id_number = ''
+
+        except ValueError:
+            error_msg = QMessageBox()
+            error_msg.setText('Select book to proceed with return')
+            error_msg.setWindowTitle('Error')
+            error_msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+            error_msg.setIcon(QMessageBox.Icon.Critical)
+            error_msg.exec()
+
 
 class CheckAccountWindowTable(QTableWidget):
     def __init__(self, users_table):
