@@ -14,7 +14,7 @@ class MainWindow(QMainWindow):
 
         # Toolbar settings
         
-        self.addToolBar(QToolBar())
+        # self.addToolBar(QToolBar())
 
         # Central Tab Widget settings
 
