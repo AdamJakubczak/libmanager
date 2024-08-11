@@ -346,8 +346,12 @@ class TabTwoButtons(QWidget):
 
         self.add_user_button = QPushButton('Add user')
         self.add_user_button.clicked.connect(self.add_user)
+
+        self.check_account = QPushButton('Check account')
+        self.check_account.clicked.connect(self.check_account_func)
         
         main_layout.addWidget(self.add_user_button)
+        main_layout.addWidget(self.check_account)
 
         self.setLayout(main_layout)
         self.add_user_window = None
@@ -356,6 +360,11 @@ class TabTwoButtons(QWidget):
 
         self.add_user_window = AddUserWindow(self.user_table)
         self.add_user_window.show()
+    
+    def check_account_func(self):
+
+        self.check_account_window = CheckAccountWindow(self.user_table)
+        self.check_account_window.show()
 
 
 class AddUserWindow(QWidget):
@@ -426,4 +435,49 @@ class AddUserForm(QWidget):
 
         self.setLayout(main_layout)
 
-        
+class CheckAccountWindow(QWidget):
+    def __init__(self, users_table):
+        super().__init__()
+
+        self.users_table = users_table
+
+        main_layout = QVBoxLayout()
+
+        self.check_account_table = CheckAccountWindowTable(self.users_table)
+        main_layout.addWidget(self.check_account_table)
+
+        self.setLayout(main_layout)
+
+class CheckAccountWindowTable(QTableWidget):
+    def __init__(self, users_table):
+        super().__init__()
+
+        self.users_table = users_table
+
+        horizontal_headers = ['Id', 'Title', 'Author name', 'Author last name' , 'ISBN']
+
+        self.setColumnCount(len(horizontal_headers))
+        self.setHorizontalHeaderLabels(horizontal_headers)
+        self.setWindowTitle('Account window')
+
+        header = self.horizontalHeader()
+
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
+
+        self.load_data(self.users_table.table_user_id)
+
+    def load_data(self, user_id):
+
+        self.table_data = DataAcessObject.retrieve_what_user_got(user_id)
+
+        for id, row in enumerate(self.table_data):
+            self.insertRow(id)
+            self.setItem(id, 0, QTableWidgetItem(str(row.book_id)))
+            self.setItem(id, 1, QTableWidgetItem(str(row.book_title)))
+            self.setItem(id, 2, QTableWidgetItem(str(row.book_author_name)))
+            self.setItem(id, 3, QTableWidgetItem(str(row.book_author_last_name)))
+            self.setItem(id, 4, QTableWidgetItem(str(row.book_isbn)))

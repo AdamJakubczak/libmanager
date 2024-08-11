@@ -259,3 +259,35 @@ class DataAcessObject:
         db.close_connection()
 
         return users
+    
+    @classmethod
+    def retrieve_what_user_got(cls, user_id):
+
+        borrowed_books = []
+
+        db = DataAcessObject()
+        db.open_connection()
+
+        execute_querry = '''
+        SELECT book_id, book_title, author_name, author_last_name, book_isbn
+        FROM Books
+        JOIN Transactions ON transaction_book_id = book_id
+        JOIN Users ON transaction_user_id = user_id
+        JOIN Authors ON book_author_id = author_id
+        WHERE user_id = ?
+        '''
+
+        db.cursor.execute(execute_querry, (user_id,))
+        data = db.cursor.fetchall()
+        db.close_connection()
+
+        for row in data:
+            book = Book()
+            book.book_id = row[0]
+            book.book_title = row[1]
+            book.book_author_name = row[2]
+            book.book_author_last_name= row[3]
+            book.book_isbn = row[4]
+            borrowed_books.append(book)
+        
+        return borrowed_books
