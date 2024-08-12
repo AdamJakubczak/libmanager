@@ -147,7 +147,7 @@ class AddBookWindow(QWidget):
         self.book_table = book_table
 
         self.setWindowTitle('Add new book')
-        self.setFixedSize(QSize(600,200))
+        self.setFixedSize(QSize(600,160))
 
         main_layout = QVBoxLayout()
 
